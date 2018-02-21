@@ -3,8 +3,9 @@
 import requests
 import csv
 
+fieldnames = ['isbn13', 'title', 'publisher', 'pubdate', 'price']
+
 with open('finished.csv', 'w', newline='\n', encoding='utf-8') as writeto:
-    fieldnames = ['isbn13', 'title', 'publisher', 'pubdate', 'price']
     writer = csv.DictWriter(writeto, fieldnames=fieldnames, extrasaction='ignore')
     writer.writeheader()
 
@@ -12,7 +13,10 @@ with open('finished.csv', 'w', newline='\n', encoding='utf-8') as writeto:
         reader = csv.DictReader(readfrom)
         for row in reader:
             isbn = row['ISBN']
-            r = requests.get('https://api.douban.com/v2/book/isbn/' + isbn + '?fields=isbn13,title,publisher,pubdate,price')
+            r = requests.get(
+                'https://api.douban.com/v2/book/isbn/' + isbn
+                + '?fields=' + ','.join(fieldnames)
+            )
             book_info = r.json()
             
             writer.writerow(book_info)
